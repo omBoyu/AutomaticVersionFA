@@ -1,0 +1,29 @@
+name: pullrequest
+on:
+  pull_request:
+    types:
+      - "opened"
+      - "reopened"
+      - "review_requested"
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: true
+  NuGetDirectory: ${{ github.workspace}}/nuget
+  NUGET_SOURCE_URL: "https://nuget.pkg.github.com/omBoyu/index.json"
+  NUGET_SOURCE_USER: "omBoyu"
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  run_test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+      - name: Nuget add source
+        run: dotnet nuget add source ${{ env.NUGET_SOURCE_URL }} -n github -u ${{ secrets.NUGET_SOURCE_USER }} -p ${{ secrets.NUGET_APIKEY }} --store-password-in-clear-text
+      - name: Run tests
+        run: dotnet test --configuration Release
