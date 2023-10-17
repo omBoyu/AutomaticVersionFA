@@ -30,7 +30,7 @@ jobs:
         with:
           file: |
             "**/*.csproj"
-          version: bump-build
+          version: bump-minor
 
       - name: Push updated version to master
         run: |
